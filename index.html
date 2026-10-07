@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tennis de Table – Club de tennis de table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Variables ============ */
+:root{
+  --orange:#E8500A;
+  --orange-dark:#B83D05;
+  --ink:#1B1A19;
+  --muted:#5E5A56;
+  --bg:#FBF9F6;
+  --card:#FFFFFF;
+  --line:#E9E3DC;
+  --nav-h:68px;
+  --radius:14px;
+  --display:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+  --body:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.6;font-size:17px}
+img{max-width:100%;display:block}
+a{color:var(--orange-dark)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:4px}
+
+/* ============ Navigation ============ */
+.nav{position:fixed;inset:0 0 auto 0;height:var(--nav-h);z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,48px);background:rgba(251,249,246,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.logo{font-family:var(--display);font-size:2rem;letter-spacing:.04em;color:var(--ink);text-decoration:none}
+.logo b{color:var(--orange);font-weight:400}
+.nav ul{display:flex;gap:6px;list-style:none;align-items:center}
+.nav a.link{display:block;padding:8px 14px;border-radius:999px;color:var(--ink);text-decoration:none;font-weight:500;font-size:.98rem;transition:background .2s,color .2s}
+.nav a.link:hover{background:rgba(232,80,10,.1)}
+.nav a.link[aria-current="page"]{background:var(--orange);color:#fff}
+.burger{display:none;background:none;border:0;width:44px;height:44px;cursor:pointer;border-radius:8px}
+.burger span,.burger span::before,.burger span::after{display:block;width:24px;height:2px;background:var(--ink);position:relative;margin:auto;transition:transform .25s,background .25s}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0}
+.burger span::before{top:-7px}.burger span::after{top:7px}
+.burger[aria-expanded="true"] span{background:transparent}
+.burger[aria-expanded="true"] span::before{transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span::after{transform:translateY(-7px) rotate(-45deg)}
+
+/* ============ Pages (une seule visible à la fois) ============ */
+.js .page{display:none}
+.js .page.active{display:block}
+main{padding-top:var(--nav-h);min-height:100vh}
+.wrap{width:min(1080px,92%);margin-inline:auto}
+section{padding:clamp(44px,7vw,84px) 0}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.02em;line-height:1}
+h1{font-size:clamp(3.4rem,10vw,7.2rem)}
+h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:22px}
+h3{font-size:1.6rem;margin-bottom:10px;color:var(--orange-dark)}
+p+p{margin-top:1em}
+.lead{font-size:1.15rem;color:var(--muted);max-width:62ch}
+
+/* ============ Boutons ============ */
+.btn{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid var(--orange);
+  background:var(--orange);color:#fff;transition:transform .15s,background .2s,color .2s;cursor:pointer;font:inherit;font-weight:700}
+.btn:hover{background:var(--orange-dark);border-color:var(--orange-dark);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--orange-dark)}
+.btn.ghost:hover{background:var(--orange);color:#fff}
+.btn-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+
+/* ============ Hero avec scène de ping-pong ============ */
+.hero{position:relative;overflow:hidden;padding:clamp(56px,9vw,110px) 0 clamp(150px,20vw,230px);
+  background:linear-gradient(180deg,#FFF3EA 0%,var(--bg) 100%)}
+.hero .tag{font-weight:500;color:var(--muted);margin-bottom:14px;font-size:1.05rem}
+.hero h1 span{color:var(--orange)}
+.hero .lead{margin-top:20px}
+.court{position:absolute;left:0;right:0;bottom:0;height:clamp(110px,16vw,180px);pointer-events:none}
+.table-top{position:absolute;left:8%;right:8%;bottom:34%;height:12px;background:#1F5FA8;border-radius:3px;box-shadow:0 8px 0 #174a85}
+.table-top::before{content:"";position:absolute;left:50%;top:-34px;width:3px;height:34px;background:#fff;transform:translateX(-50%);opacity:.9}
+.leg{position:absolute;bottom:0;width:8px;height:34%;background:#3a3735}
+.leg.l{left:12%}.leg.r{right:12%}
+.paddle{position:absolute;bottom:calc(34% + 14px);width:34px;height:34px;border-radius:50%;background:var(--orange);border:3px solid #7a2a03}
+.paddle::after{content:"";position:absolute;left:50%;top:100%;width:8px;height:20px;background:#7a2a03;transform:translateX(-50%);border-radius:0 0 4px 4px}
+.paddle.l{left:5%;animation:hitL 1.8s ease-in-out infinite}
+.paddle.r{right:5%;animation:hitR 1.8s ease-in-out infinite}
+.ball{position:absolute;left:8%;bottom:calc(34% + 16px);width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #e8dcd0;
+  animation:ballX 1.8s linear infinite,ballY 1.8s ease-out infinite}
+@keyframes ballX{0%{left:8%}50%{left:calc(92% - 18px)}100%{left:8%}}
+@keyframes ballY{0%,50%,100%{transform:translateY(0)}25%,75%{transform:translateY(-70px)}}
+@keyframes hitL{0%,92%,100%{transform:rotate(0)}96%{transform:rotate(-24deg)}}
+@keyframes hitR{42%,58%{transform:rotate(0)}50%{transform:rotate(24deg)}}
+.credit{margin-top:22px;color:var(--muted);font-size:.9rem}
+
+/* ============ Présentation ============ */
+.page-head{padding:clamp(40px,6vw,72px) 0 8px;background:linear-gradient(180deg,#FFF3EA,var(--bg))}
+.page-head h1{font-size:clamp(3rem,8vw,5.6rem)}
+.block{padding:30px 0;border-top:1px solid var(--line)}
+.rules{list-style:none;display:grid;gap:12px;max-width:80ch}
+.rules li{padding:14px 18px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--orange);border-radius:10px}
+.rules li strong{color:var(--orange-dark)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 28px}
+.cols li{list-style:none;padding:12px 0;border-bottom:1px solid var(--line)}
+.cols li strong{color:var(--orange-dark)}
+.gear{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0 26px;list-style:none}
+.gear li{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.photo{margin:34px 0 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.photo img{width:100%;max-height:460px;object-fit:cover}
+
+/* ============ Contact ============ */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.tile{aspect-ratio:4/3;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px}
+.tile .ico{font-size:2.4rem}
+.tile .t{font-family:var(--display);font-size:1.5rem;letter-spacing:.04em;color:var(--orange-dark)}
+.tile .s{font-size:.9rem;color:var(--muted)}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:10px}
+.info-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.info-card p{margin-top:.5em}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:.97rem}
+td:last-child{white-space:nowrap;font-weight:700;color:var(--orange-dark)}
+.map{margin-top:26px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.map iframe{display:block;width:100%;height:380px;border:0}
+
+/* ============ Inscription ============ */
+.season{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(232,80,10,.12);color:var(--orange-dark);font-weight:700;font-size:.95rem;margin-bottom:16px}
+.stats{display:flex;gap:clamp(18px,5vw,56px);flex-wrap:wrap;margin-top:34px}
+.stat strong{display:block;font-family:var(--display);font-size:3.2rem;line-height:1;color:var(--orange)}
+.stat span{font-size:.95rem;color:var(--muted)}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.slot{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--orange);border-radius:var(--radius);padding:20px}
+.slot .day{font-family:var(--display);font-size:1.9rem;letter-spacing:.03em}
+.slot .hrs{font-weight:700;color:var(--orange-dark);margin:2px 0 6px}
+.slot .what{color:var(--muted);font-size:.96rem}
+.form-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(22px,4vw,36px);max-width:760px}
+.form-box .btn{margin:6px 0 22px}
+
+/* ============ Pied de page ============ */
+footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem;text-align:center}
+
+/* ============ Mobile ============ */
+@media (max-width:760px){
+  .burger{display:block}
+  .nav ul{position:absolute;top:var(--nav-h);left:0;right:0;flex-direction:column;align-items:stretch;gap:0;padding:10px 16px 16px;
+    background:rgba(251,249,246,.97);border-bottom:1px solid var(--line);display:none}
+  .nav ul.open{display:flex}
+  .nav a.link{padding:14px;border-radius:10px}
+  td:last-child{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="logo" href="#accueil">Tennis <b>de Table</b></a>
+  <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span></button>
+  <nav aria-label="Navigation principale">
+    <ul id="menu">
+      <li><a class="link" href="#accueil" data-page="accueil">Accueil</a></li>
+      <li><a class="link" href="#presentation" data-page="presentation">Présentation</a></li>
+      <li><a class="link" href="#contact" data-page="contact">Contact</a></li>
+      <li><a class="link" href="#inscription" data-page="inscription">Inscription</a></li>
+      <li><a class="link" href="https://www.facebook.com" target="_blank" rel="noopener">Facebook</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+<!-- ==================== ACCUEIL ==================== -->
+<div class="page" id="page-accueil">
+  <section class="hero">
+    <div class="wrap">
+      <p class="tag">Club de tennis de table</p>
+      <h1>Tennis <span>de Table</span></h1>
+      <p class="lead">Bienvenue sur notre site de ping-pong, où passion et performance se rencontrent ! 🎉🏓</p>
+      <p class="lead">Que vous soyez un joueur débutant cherchant à découvrir ce sport captivant ou un compétiteur aguerri visant à perfectionner ses techniques, vous êtes au bon endroit. Explorez nos ressources, rejoignez notre communauté dynamique et laissez-vous inspirer par l'esprit sportif qui anime chaque partie.</p>
+      <p class="lead">Préparez-vous à vivre l'expérience du ping-pong comme jamais auparavant !</p>
+      <div class="btn-row">
+        <a class="btn" href="#inscription">Je m'inscris</a>
+        <a class="btn ghost" href="#presentation">Découvrir le tennis de table</a>
+      </div>
+    </div>
+    <div class="court" aria-hidden="true">
+      <div class="leg l"></div><div class="leg r"></div>
+      <div class="table-top"></div>
+      <div class="paddle l"></div><div class="paddle r"></div>
+      <div class="ball"></div>
+    </div>
+  </section>
+  <div class="wrap">
+    <p class="credit">Let's Ping Pong !</p>
+  </div>
+</div>
+
+<!-- ==================== PRÉSENTATION ==================== -->
+<div class="page" id="page-presentation">
+  <div class="page-head"><div class="wrap"><h1>Le tennis de table</h1><p class="lead">Règles, matériel, techniques et stratégies : tout pour bien démarrer.</p></div></div>
+  <div class="wrap">
+
+    <section class="block">
+      <h2>Règles du jeu</h2>
+      <ul class="rules">
+        <li><strong>Set à 11 points</strong> — le premier à 11 gagne le set (avec 2 points d'écart).</li>
+        <li><strong>Écart de 2 points</strong> — à 10–10, on continue jusqu'à +2.</li>
+        <li><strong>Match en sets</strong> — souvent en 3 ou 4 sets gagnants. Dans les épreuves individuelles, c'est 4 sets gagnants sur 7 sets maximum. Dans les épreuves par équipes, c'est 3 sets gagnants sur 5 sets maximum.</li>
+        <li><strong>Changement de service</strong> — tous les 2 points (puis 1 point chacun à 10–10).</li>
+        <li><strong>Service</strong> — doit être lancé verticalement au moins 16 cm vers le haut, sans effet de rotation. La balle doit être toujours visible par l'adversaire (pas cachée par la main ou le corps). La balle doit être frappée derrière la ligne de fond, jamais au-dessus de la table.</li>
+        <li><strong>Let</strong> — service qui touche le filet mais atterrit dans le camp adverse, à rejouer.</li>
+        <li><strong>Point</strong> — marqué lorsque l'adversaire ne renvoie pas correctement la balle (balle dans le filet, hors limites, double rebond).</li>
+        <li><strong>Changement de côté</strong> — les joueurs changent de côté après chaque set et quand un joueur atteint les 5 points dans le dernier set.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Matériel utilisé</h2>
+      <p>Le tennis de table nécessite plusieurs éléments de matériel pour être pratiqué :</p>
+      <ul class="gear">
+        <li>Une <strong>table</strong> de tennis de table (2,74 m de long, 1,525 m de large et 76 cm de haut)</li>
+        <li>Un <strong>filet</strong> (15,25 cm de haut au milieu)</li>
+        <li>Des <strong>raquettes</strong> (généralement en bois ou en composite)</li>
+        <li>Une <strong>balle</strong> légère en plastique (diamètre de 40 mm, poids de 2,7 g)</li>
+      </ul>
+      <p>En plus de ces éléments de base, les joueurs peuvent également utiliser des accessoires tels que des housses de raquette pour protéger leur équipement, des chaussures de sport adaptées pour une meilleure adhérence sur le sol, et des vêtements confortables pour faciliter les mouvements pendant le jeu.</p>
+      <p>Il est important de choisir du matériel de qualité pour garantir une bonne expérience de jeu et éviter les blessures. Les tables de tennis de table peuvent être utilisées à l'intérieur ou à l'extérieur, mais il est recommandé d'utiliser des tables spécialement conçues pour une utilisation en extérieur si vous prévoyez de jouer à l'extérieur régulièrement, car elles sont plus résistantes aux intempéries.</p>
+      <p>Les raquettes de tennis de table sont disponibles dans une variété de styles et de matériaux pour répondre aux besoins et aux préférences des joueurs. Les raquettes en bois sont souvent utilisées par les débutants, tandis que les raquettes en composite offrent une meilleure performance pour les joueurs plus avancés. Les balles de tennis de table sont généralement fabriquées en plastique et sont disponibles dans différentes couleurs, bien que la balle blanche soit la plus courante.</p>
+      <figure class="photo"><img src="https://asttbsl.fr/image/img3.JPG" alt="Séance d'entraînement au club" loading="lazy"></figure>
+    </section>
+
+    <section class="block">
+      <h2>Techniques de base</h2>
+      <ul class="cols">
+        <li><strong>Position de base</strong> — jambes fléchies, poids vers l'avant, raquette devant soi.</li>
+        <li><strong>Prise de raquette</strong> — prise orthodoxe (shakehand) ou prise chinoise (penhold).</li>
+        <li><strong>Coup droit</strong> — mouvement circulaire vers l'avant pour attaquer.</li>
+        <li><strong>Revers</strong> — coup rapide et court pour contrôler la balle.</li>
+        <li><strong>Topspin</strong> — effet lifté pour donner une trajectoire courbe et agressive.</li>
+        <li><strong>Backspin</strong> — effet coupé pour ralentir et faire plonger la balle.</li>
+        <li><strong>Bloc</strong> — technique défensive pour renvoyer une attaque rapide.</li>
+        <li><strong>Poussette</strong> — coup coupé bas pour garder la balle courte.</li>
+        <li><strong>Service simple</strong> — lancer droit, contact propre, placement varié.</li>
+        <li><strong>Déplacement</strong> — petits pas rapides pour se placer correctement.</li>
+        <li><strong>Smash</strong> — coup très fort frappé sur une balle haute pour marquer le point.</li>
+        <li><strong>Le flip</strong> — un petit coup d'attaque joué sur une balle courte, juste au-dessus de la table.</li>
+        <li><strong>Le chop</strong> — un coup défensif très coupé, joué loin de la table.</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Compétitions célèbres</h2>
+      <ul class="cols">
+        <li><strong>Jeux Olympiques</strong> — points très élevés (tous les 4 ans).</li>
+        <li><strong>Championnats du monde individuels</strong> — très gros points.</li>
+        <li><strong>WTT Grand Smash</strong> — les tournois qui rapportent le plus de points ITTF.</li>
+        <li><strong>Coupe du monde</strong></li>
+        <li><strong>WTT Finals</strong> — réservé aux meilleurs joueurs de l'année.</li>
+        <li><strong>WTT Champions</strong></li>
+        <li><strong>WTT Star Contender</strong></li>
+        <li><strong>WTT Contender</strong></li>
+        <li><strong>WTT Feeder</strong> — niveau plus bas, mais donne des points.</li>
+        <li><strong>Championnats continentaux</strong> (Europe, Asie…)</li>
+        <li><strong>Jeux continentaux</strong> (Jeux Européens, Jeux Asiatiques…)</li>
+        <li><strong>Pro A / Pro B</strong> France</li>
+      </ul>
+      <figure class="photo"><img src="https://asttbsl.fr/image/img4.JPG" alt="Match de tennis de table" loading="lazy"></figure>
+    </section>
+
+    <section class="block">
+      <h2>Stratégies de jeu</h2>
+      <ul class="cols">
+        <li><strong>Attaque rapide</strong> — prendre l'initiative dès la 3ᵉ balle.</li>
+        <li><strong>Jeu en rotation</strong> — utiliser beaucoup de topspin pour contrôler l'échange.</li>
+        <li><strong>Variation d'effets</strong> — alterner lifté, coupé, latéral pour perturber l'adversaire.</li>
+        <li><strong>Variation de rythme</strong> — accélérer puis ralentir pour casser le tempo.</li>
+        <li><strong>Placement de balle</strong> — viser les angles, le coude, les zones faibles.</li>
+        <li><strong>Service + 3ᵉ balle</strong> — servir pour préparer une attaque juste après.</li>
+        <li><strong>Remise courte</strong> — empêcher l'adversaire d'attaquer.</li>
+        <li><strong>Bloc actif</strong> — renvoyer vite pour reprendre l'avantage.</li>
+        <li><strong>Contre-initiative</strong> — laisser l'autre attaquer puis contrer.</li>
+        <li><strong>Jeu à mi-distance</strong> — défendre en topspin sur topspin.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<!-- ==================== CONTACT ==================== -->
+<div class="page" id="page-contact">
+  <div class="page-head">
+    <div class="wrap">
+      <h1>Servez fort.</h1>
+      <p class="lead">Rejoignez une communauté passionnée de tennis de table. Tous niveaux, toutes les semaines. Une raquette suffit.</p>
+      <div class="btn-row">
+        <a class="btn" href="#contact-infos">Nous contacter</a>
+        <a class="btn ghost" href="#contact-galerie">Voir le club</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <section id="contact-galerie">
+      <h2>Le club en images</h2>
+      <div class="gallery">
+        <div class="tile"><span class="ico">🏓</span><span class="t">Nos tables</span><span class="s">Salle principale · 10+ tables</span></div>
+        <div class="tile"><span class="ico">🏆</span><span class="t">Tournois</span><span class="s">Tournois &amp; compétitions</span></div>
+        <div class="tile"><span class="ico">👥</span><span class="t">L'équipe</span><span class="s">Membres &amp; équipes</span></div>
+        <div class="tile"><span class="ico">🎯</span><span class="t">Coaching</span><span class="s">Entraînements</span></div>
+        <div class="tile"><span class="ico">🏅</span><span class="t">Palmarès</span><span class="s">Palmarès &amp; trophées</span></div>
+      </div>
+    </section>
+
+    <section id="contact-infos">
+      <h2>Nous trouver</h2>
+      <div class="info">
+        <div class="info-card">
+          <h3>Adresse</h3>
+          <p>📍 14 rue Georges Picot<br>94470, France</p>
+          <h3 style="margin-top:22px">Nous joindre</h3>
+          <p>📞 <a href="tel:+33662149074">+33 (0)6 62 14 90 74</a></p>
+          <p>✉️ <a href="mailto:astt94@gmail.com">astt94@gmail.com</a></p>
+        </div>
+        <div class="info-card">
+          <h3>Horaires d'ouverture</h3>
+          <table>
+            <tbody>
+              <tr><td style="white-space:normal;font-weight:500;color:inherit">Mercredi – Entraînement jeunes et adultes</td><td>17h – 20h</td></tr>
+              <tr><td style="white-space:normal;font-weight:500;color:inherit">Vendredi – Loisirs adultes</td><td>19h – 22h</td></tr>
+              <tr><td style="white-space:normal;font-weight:500;color:inherit">Samedi – Entraînement jeunes et adultes</td><td>08h – 11h</td></tr>
+              <tr><td style="white-space:normal;font-weight:500;color:inherit">Dimanche – Loisirs jeunes et adultes</td><td>09h – 12h</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="map">
+        <iframe title="Plan d'accès – Gymnase Amédée Dunois" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2630.6424629315156!2d2.5161237767343616!3d48.75052620829087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e60bc1b78968f5%3A0x46e647f2cf6d9606!2sGymnase%20Am%C3%A9d%C3%A9e%20Dunois!5e0!3m2!1sfr!2sfr!4v1778579932243!5m2!1sfr!2sfr"></iframe>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ==================== INSCRIPTION ==================== -->
+<div class="page" id="page-inscription">
+  <div class="page-head">
+    <div class="wrap">
+      <span class="season">Saison 2026 / 2027 · Inscriptions ouvertes</span>
+      <h1>Servez le premier point.</h1>
+      <p class="lead">Rejoignez le club de tennis de table de votre ville. Tables homologuées, coachs diplômés, et une seule règle : on ne lâche jamais une balle sans se battre.</p>
+      <div class="btn-row"><a class="btn" href="#formulaire">Je m'inscris</a></div>
+      <div class="stats">
+        <div class="stat"><strong>10+</strong><span>tables homologuées ITTF</span></div>
+        <div class="stat"><strong>Nombreux</strong><span>membres actifs</span></div>
+        <div class="stat"><strong>1</strong><span>coach diplômé d'État</span></div>
+      </div>
+      <p class="credit">Places limitées par créneau.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <section>
+      <h2>Créneaux</h2>
+      <div class="slots">
+        <div class="slot"><div class="day">Mercredi</div><div class="hrs">17h00 – 20h00</div><div class="what">Entraînement jeunes et adultes</div></div>
+        <div class="slot"><div class="day">Vendredi</div><div class="hrs">19h00 – 22h00</div><div class="what">Loisirs adultes</div></div>
+        <div class="slot"><div class="day">Samedi</div><div class="hrs">08h00 – 11h00</div><div class="what">Entraînement jeunes et adultes</div></div>
+        <div class="slot"><div class="day">Dimanche</div><div class="hrs">09h00 – 12h00</div><div class="what">Loisirs jeunes et adultes</div></div>
+      </div>
+    </section>
+    <section id="formulaire">
+      <h2>Formulaire d'inscription</h2>
+      <div class="form-box">
+        <a class="btn" href="https://asttbsl.fr/upload/2024-2025.docx" download>Télécharger la fiche d'inscription</a>
+        <p>Nous contacter directement par :</p>
+        <p>Téléphone : <strong><a href="tel:+330699589281">+33 (0)6 </a></strong><br>
+        Email : <a href="mailto:astt94@gmail.com">@gmail.com</a></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">Tennis de Table — Gymnase municipal — Inscriptions ouvertes toute l'année · Site réalisé par Gérard CHEN</div>
+</footer>
+
+<script>
+(function(){
+  document.documentElement.classList.add('js');
+  var pages=['accueil','presentation','contact','inscription'];
+  var links=document.querySelectorAll('.nav a[data-page]');
+  var menu=document.getElementById('menu');
+  var burger=document.getElementById('burger');
+  var titles={accueil:'Tennis de Table – Club de tennis de table',presentation:'Présentation – Tennis de Table',contact:'Contact – Tennis de Table',inscription:'Inscription – Tennis de Table'};
+
+  // Ancres internes à une page : contact-galerie, contact-infos, formulaire
+  var anchorPage={'contact-galerie':'contact','contact-infos':'contact','formulaire':'inscription'};
+
+  function show(hash){
+    var id=(hash||'').replace('#','');
+    var target=null, page=id;
+    if(anchorPage[id]){page=anchorPage[id];target=id}
+    if(pages.indexOf(page)===-1){page='accueil'}
+    pages.forEach(function(p){
+      document.getElementById('page-'+p).classList.toggle('active',p===page);
+    });
+    links.forEach(function(a){
+      if(a.dataset.page===page){a.setAttribute('aria-current','page')}else{a.removeAttribute('aria-current')}
+    });
+    document.title=titles[page];
+    menu.classList.remove('open');
+    burger.setAttribute('aria-expanded','false');
+    if(target){
+      var el=document.getElementById(target);
+      if(el){setTimeout(function(){el.scrollIntoView({behavior:'smooth'})},30)}
+    }else{
+      window.scrollTo(0,0);
+    }
+  }
+
+  window.addEventListener('hashchange',function(){show(location.hash)});
+  burger.addEventListener('click',function(){
+    var open=menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded',open?'true':'false');
+  });
+  show(location.hash);
+})();
+</script>
+</body>
+</html>
